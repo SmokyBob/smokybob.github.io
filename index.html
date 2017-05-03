@@ -1,12 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>test github pages</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="css/style.css" rel="stylesheet">
-  </head>
-  <body>
-  Hello world
-  </body>
+
+<head>
+  <title>Simple player</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--<link href="css/style.css" rel="stylesheet">-->
+  <!-- See https://goo.gl/OOhYW5 -->
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- See https://goo.gl/qRE0vM -->
+  <meta name="theme-color" content="#3f51b5">
+
+  <!-- Add to homescreen for Chrome on Android. Fallback for manifest.json -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Simple player">
+
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Simple player">
+
+  <!-- Homescreen icons -->
+  <link rel="apple-touch-icon" href="/images/manifest/icon-48x48.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/images/manifest/icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="96x96" href="/images/manifest/icon-96x96.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/images/manifest/icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="/images/ic_play_circle_outline_black_192.png">
+
+  <!-- Tile icon for Windows 8 (144x144 + tile color) -->
+  <meta name="msapplication-TileImage" content="/images/manifest/icon-144x144.png">
+  <meta name="msapplication-TileColor" content="#3f51b5">
+  <meta name="msapplication-tap-highlight" content="no">
+
+</head>
+
+<body>
+  Select an audio file:<input type="file" id="audio" accept="audio/*" onchange="Open();"><br>
+  CurrentTime
+  <input id="currentTime" type="text" disabled value="" onchange="setCurrentTime();" >
+
+  <br> 
+  <video src="" style="display:none;width:75%;height:48px" id="player" controls autoplay
+    onplay="going();" onplaying="going();"
+    onpause="audioPaused();" ontimeupdate="timeUpdate();"
+    onseeked="seeked();"
+  ></video>
+
+  <br>
+  <i>Use Spacebar to pause/play the audio</i>
+
+  <!--TODO:
+  K- Aggiungere input per selezionare inserire il tempo da cui partire
+  K- keybinding per start e stop (spazio)
+  - bottoni e binding per andare avanti e indietro di 30 sec
+  - Sincronizzare con realtimeAPI
+  
+  -->
+  <script>
+      function Open(){
+        let fileInput=document.getElementById('audio');
+        var file = fileInput.files[0];
+        var type = file.type;
+        var videoNode = document.getElementById('player');
+        videoNode.style.display='';
+        var fileURL = URL.createObjectURL(file);
+        videoNode.src = fileURL;
+        document.getElementById('currentTime').focus();
+      }
+      function going(){
+        console.log('going');
+        document.getElementById('currentTime').setAttribute('disabled','true');
+      }
+      function audioPaused(){
+        console.log('paused');
+        document.getElementById('currentTime').removeAttribute('disabled');
+      }
+      function timeUpdate(){
+        let player = document.getElementById('player');
+        if (!player.paused){
+          seeked();
+        } 
+      }
+      function seeked(){
+        var seconds = document.getElementById('player').currentTime % 60;
+        var minutes = (document.getElementById('player').currentTime - seconds)/60;
+        var floored = Math.floor(seconds);
+        var timestr = '';
+        if(minutes<100){
+          timestr+='0';
+          if(minutes<10){
+            timestr+='0';
+          }
+        }
+        timestr+=minutes+':';
+        if(floored<10){
+          timestr+='0';
+        }
+        timestr+=floored+'';
+        document.getElementById('currentTime').value = timestr;
+      }
+      function setCurrentTime(){
+        console.log('setCurrentTime');
+        let player = document.getElementById('player');
+        if (player.paused){
+          var timestr = document.getElementById('currentTime').value;
+          var timeVal = parseInt(timestr.split(":")[0])*60;
+          if (timestr.split(":").length>1){
+            timeVal+= parseInt(timestr.split(":")[1]);
+          }
+
+          player.currentTime = timeVal;
+        }
+        
+      }
+      //Registro Spazio
+      function pauseStart(event) {
+        if(event.keyCode == 32){
+          event.preventDefault();
+          let player = document.getElementById('player');
+          if (player.paused){
+            document.getElementById('player').play();
+          }else{
+            document.getElementById('player').pause();
+          }
+
+        }
+          
+      }
+
+      //register the handler
+      document.addEventListener('keydown', pauseStart, false);
+   
+    </script>
+</body>
+
 </html>
