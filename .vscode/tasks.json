@@ -1,0 +1,49 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "0.1.0",
+  "tasks": [{
+    "taskName": "serve",
+    "command": "polymer",
+    "isShellCommand": true,
+    "args": ["serve", "--port", "8000", "--open"],
+    "showOutput": "always",
+    "echoCommand": false,
+    "suppressTaskName": true
+  }, {
+    "taskName": "build",
+    "command": "polymer",
+    "args": [
+      "build"
+    ],
+    "options": {
+      "cwd": "${workspaceRoot}/player"
+    }
+  }, {
+    "taskName": "test",
+    "command": "polymer",
+    "args": [
+      "test"
+    ],
+    "options": {
+      "cwd": "${workspaceRoot}/player"
+    },
+    "isShellCommand": true,
+    "showOutput": "always",
+    "echoCommand": false,
+    "suppressTaskName": true
+  }, {
+    "taskName": "lint",
+    "command": "polymer",
+    "args": [
+      "lint"
+    ],
+    "options": {
+      "cwd": "${workspaceRoot}/player"
+    },
+    "isShellCommand": true,
+    "showOutput": "always",
+    "echoCommand": false,
+    "suppressTaskName": true
+  }]
+}
